@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { 
   ReactFlow, 
   Background, 
@@ -21,7 +21,7 @@ const initialEdges = [
   { id: "e1-2", source: "1", target: "2" },
 ];
 
-const NODE_TYPES = ["Client", "Server", "Database", "Cache", "Load Balancer"];
+const NODE_TYPES = ["Client", "Server", "Database", "Cache", "Load Balancer", "CDN", "Queue", "API Gateway"];
 
 export function Canvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -32,7 +32,7 @@ export function Canvas() {
     [setEdges]
   );
 
-  const onAddNode = (label) => {
+  const onAddNode = (label: string) => {
     const newNode = {
       id: `node-${Date.now()}`,
       position: { 
@@ -59,12 +59,12 @@ export function Canvas() {
         <Controls />
         <MiniMap />
         
-        <Panel position="top-center" className="flex gap-2 rounded-md bg-white p-2 shadow-md">
+        <Panel position="top-center" className="flex flex-wrap gap-1.5 rounded-lg bg-white/90 backdrop-blur-sm p-2 shadow-lg border border-gray-200/60">
           {NODE_TYPES.map((type) => (
             <button
               key={type}
               onClick={() => onAddNode(type)}
-              className="rounded bg-slate-800 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-slate-700"
+              className="rounded-md bg-slate-800 px-2.5 py-1 text-xs font-medium text-white transition-all hover:bg-slate-700 hover:shadow-md active:scale-95"
             >
               + {type}
             </button>
