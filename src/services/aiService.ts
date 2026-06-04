@@ -1,4 +1,6 @@
-const NIM_API_URL = "/api/nvidia/v1/chat/completions";
+// In production (Vercel): hits the /api/chat serverless function
+// In development (Vite):  proxied to the NVIDIA API via vite.config.ts
+const NIM_API_URL = "/api/chat";
 const MODEL = "meta/llama-3.3-70b-instruct";
 
 export interface ChatMessage {
@@ -24,14 +26,6 @@ You are friendly, encouraging, and genuinely interested in helping the user lear
 export async function sendToNIM(
   messages: ChatMessage[]
 ): Promise<string> {
-  const apiKey = import.meta.env.VITE_NVIDIA_API_KEY;
-
-  if (!apiKey || apiKey === "your_nvidia_nim_api_key_here") {
-    throw new Error(
-      "NVIDIA API key not configured. Add your key to the .env file as VITE_NVIDIA_API_KEY."
-    );
-  }
-
   const fullMessages: ChatMessage[] = [
     { role: "system", content: SYSTEM_PROMPT },
     ...messages,
@@ -41,8 +35,6 @@ export async function sendToNIM(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-      Accept: "application/json",
     },
     body: JSON.stringify({
       model: MODEL,
@@ -57,7 +49,7 @@ export async function sendToNIM(
   if (!response.ok) {
     const errorBody = await response.text();
     throw new Error(
-      `NVIDIA NIM API error (${response.status}): ${errorBody}`
+      `API error (${response.status}): ${errorBody}`
     );
   }
 
